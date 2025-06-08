@@ -5,14 +5,19 @@ if !exists('g:script_py_started')
 	let s:completion_channel = v:null
 
     let tags_file = '/home/anon/stow/vim/.vim/plugin/HiTags/vim.tags'
-    let log_file  = '/home/anon/Swap/vim-complete/server.log'
-    "let tags_file = '/home/anon/Swap/vim-complete/vim.tags'
-    "let tags_file = '/home/anon/Swap/vim-complete/test.tags'
-    let cmd = 'swp-completion-server.py ' . getpid() . ' ' . tags_file
-    "call job_start(cmd)
+    let log_file  = '/home/anon/Swap/vim-complete/debug/server.log'
+    let cmd = [
+        \ 'swp-completion-server.py',
+        \ string(getpid()),
+        \ tags_file
+        \ ]
 
-    "call system(cmd . ' > /dev/null 2>&1 &')
-    call system(cmd . '> ' . log_file . ' 2>&1 &')
+    call job_start(cmd, {
+        \ 'out_io':  'file',
+        \ 'out_name': log_file,
+        \ 'err_io':  'file',
+        \ 'err_name': log_file,
+        \ })
 endif
 
 " --- Client protocol

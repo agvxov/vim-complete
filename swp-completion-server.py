@@ -39,8 +39,13 @@ def get_words(input_file : str) -> [str]:
 	NAME_INDEX	  = (1) - 1
 	PATTERN_INDEX = (3) - 1
 	TYPE_INDEX	  = (4) - 1
-	# Ctags type filter
+	# Ctags field type filter
+	# C++ ["variable", "function", "prototype", "typedef",
+	#      "struct", "class", "enum (value)", "union",
+	#      "enum", "macro", "extern variable"]
 	targets = "vfptsceugdx"
+	# ["local", "member", "parameter"]
+	targets += "lmz"
 	# Ctags noise entry filter
 	def do_ignore(row):
 		IGNORE_IF_BEGINS_WITH = '!_'
