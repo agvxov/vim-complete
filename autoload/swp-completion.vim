@@ -8,7 +8,7 @@ if !exists('g:script_py_started')
     let log_file  = '/home/anon/Swap/vim-complete/server.log'
     "let tags_file = '/home/anon/Swap/vim-complete/vim.tags'
     "let tags_file = '/home/anon/Swap/vim-complete/test.tags'
-    let cmd = 'python3 /home/anon/Swap/vim-complete/completion-server.py ' . getpid() . ' ' . tags_file
+    let cmd = 'swp-completion-server.py ' . getpid() . ' ' . tags_file
     "call job_start(cmd)
 
     "call system(cmd . ' > /dev/null 2>&1 &')

@@ -1,5 +1,5 @@
-source /home/anon/Swap/vim-complete/script2.vim
-" ---------
+source /home/anon/.vim/autoload/swp-completion.vim
+
 let s:words = {}
 let s:last_word = ''
 
