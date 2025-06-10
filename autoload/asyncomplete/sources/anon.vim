@@ -26,17 +26,16 @@ function! asyncomplete#sources#anon#completor(opt, ctx) abort
 
     if empty(l:words)
         call asyncomplete#log('anon', 'matches not ready yet')
+        " This from the documentation:
+        " > If you are returning incomplete results and would like to trigger completion
+        " > on the next keypress pass 1 as the fifth parameter to asyncomplete#complete
+        " > which signifies the result is incomplete.
+        " is a lie.
+        " It seems to have been partially implemented.
+        " `asyncomplete-lsp.vim` seems to use it anyways, I do wonder if they have noticed.
         call timer_start(500, {
         \     timer-> asyncomplete#sources#anon#completor(a:opt, a:ctx)}
         \ )
-        "" tell Asyncomplete 'no items, but re-poll me'
-        "call asyncomplete#complete(
-        "      \ a:opt.name,
-        "      \ a:ctx,
-        "      \ l:startcol,
-        "      \ [],
-        "      \ 1
-        "      \ )
         return
     endif
 
