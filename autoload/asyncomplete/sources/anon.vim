@@ -1,8 +1,5 @@
 source /home/anon/.vim/autoload/swp-completion.vim
 
-let s:words = {}
-let s:last_word = ''
-
 function! asyncomplete#sources#anon#get_source_options(opts)
     return extend({
         \ 'events': ['BufWinEnter'],
