@@ -24,7 +24,7 @@ function! asyncomplete#sources#anon#completor(opt, ctx) abort
 
     let [l:status, l:words] = CompletionPoll()
 
-    if empty(l:words)
+    if l:status == 1 && empty(l:words)
         call asyncomplete#log('anon', 'matches not ready yet')
         " This from the documentation:
         " > If you are returning incomplete results and would like to trigger completion
