@@ -79,8 +79,6 @@ def filter_words(query: str, words: [str]) -> [str]:
 
 # --- Server
 #pragma region
-words = None
-
 conn = None
 
 manager = mp.Manager()

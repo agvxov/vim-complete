@@ -6,8 +6,9 @@ if !exists('g:script_py_started')
 
     let tags_file = '/home/anon/stow/vim/.vim/plugin/HiTags/vim.tags'
     let log_file  = '/home/anon/Swap/vim-complete/debug/server.log'
+    let srv_exe   = 'swp-completion-server.py'
     let cmd = [
-        \ 'swp-completion-server.py',
+        \ srv_exe,
         \ string(getpid()),
         \ tags_file
         \ ]

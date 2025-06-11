@@ -7,6 +7,7 @@ function! asyncomplete#sources#anon#get_source_options(opts)
         \}, a:opts)
 endfunction
 
+" XXX
 function! s:on_event(opt, ctx, event) abort
     if a:event == 'BufWinEnter'
         "call s:refresh_keywords()
