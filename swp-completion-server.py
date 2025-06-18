@@ -68,13 +68,23 @@ def get_words(input_file : str) -> [str]:
 				except: print("Suspicious ctags entry without a type: ", row)
 	return r
 
-def filter_words(query: str, words: [str]) -> [str]:
-	if query == '':
-		r = words
-	else:
+def filter_words(query: str, words: [str]) -> str:
+	def filter_words_simple(query, words):
 		r = {w for w in words if w.startswith(query)}
-	r = " ".join(list(r)[:MAX_RESULTS])
-	return r
+		return r
+	def filter_words_case_insensitive(query, words):
+		query = query.lower()
+		r = [w for w in words if w.lower().startswith(query)]
+		return r
+	def filter_words_smart(query, words):
+		if any(c.isupper() for c in query): return filter_words_simple(query, words)
+		else: return filter_words_case_insensitive(query, words)
+	if query != '':
+		# XXX there should be a config to set this
+		words = filter_words_smart(query, words)
+	words = list(dict.fromkeys(words)) # dedup
+	return " ".join(words[:MAX_RESULTS])
+
 #pragma endregion
 
 # --- Server
