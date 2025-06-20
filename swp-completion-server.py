@@ -37,7 +37,6 @@ def print(*args, **kwargs):
 #pragma region
 def get_words(input_file : str) -> [str]:
 	NAME_INDEX	  = (1) - 1
-	PATTERN_INDEX = (3) - 1
 	TYPE_INDEX	  = (4) - 1
 	# Ctags field type filter
 	# C++ ["variable", "function", "prototype", "typedef",
@@ -60,12 +59,10 @@ def get_words(input_file : str) -> [str]:
 		csv_reader = csv.reader(f, delimiter='\t')
 		for row in csv_reader:
 			if do_ignore(row): continue
-			for t in targets:
-				try:
-					if t == row[TYPE_INDEX]:
-						r.add(row[NAME_INDEX])
-						# re.escape?
-				except: print("Suspicious ctags entry without a type: ", row)
+			try:
+				if row[TYPE_INDEX] in targets:
+					r.add(row[NAME_INDEX])
+			except: print("Suspicious ctags entry without a type: ", row)
 	return r
 
 def filter_words(query: str, words: [str]) -> str:
@@ -89,32 +86,33 @@ def filter_words(query: str, words: [str]) -> str:
 
 # --- Server
 #pragma region
+class NullProcess:
+	def is_alive(self): return False
+
 conn = None
 
 manager = mp.Manager()
 shared_state = manager.dict()
 shared_state["words"]		   = None
 shared_state["filtered_words"] = None
-word_process   = None
-filter_process = None
+word_process   = NullProcess()
+filter_process = NullProcess()
 
 server_socket = socket.socket(socket.AF_UNIX, socket.SOCK_STREAM)
 
 buffer = b''
 
 def do_abort(process):
-	if process and process.is_alive():
+	if process.is_alive():
 		process.terminate()
 		process.join()
 
 def bg_filter_words():
-	global word_process, filter_process
+	global filter_process
 	def mp_filter_words(shared_state : dict, query : str) -> None:
 		if shared_state["words"] == None: return
 		filtered_words = filter_words(query, shared_state["words"])
 		shared_state["filtered_words"] = filtered_words
-
-	shared_state["filtered_words"] = None
 
 	filter_process = mp.Process(
 		target=mp_filter_words,
@@ -123,16 +121,10 @@ def bg_filter_words():
 	filter_process.start()
 
 def bg_process_words():
-	global word_process, filtered_words
+	global word_process
 	def mp_get_words(shared_state : dict, input_file : str) -> None:
 		words = get_words(input_file)
 		shared_state["words"] = words
-
-	do_abort(word_process)
-	do_abort(filter_process)
-
-	shared_state["words"]		   = None
-	shared_state["filtered_words"] = None
 
 	word_process = mp.Process(
 		target=mp_get_words,
@@ -141,6 +133,8 @@ def bg_process_words():
 	word_process.start()
 
 def clean_up() -> None:
+	do_abort(word_process)
+	do_abort(filter_process)
 	# Clean up any previous socket file
 	if os.path.exists(socket_path):
 		os.remove(socket_path)
@@ -168,10 +162,10 @@ try:
 	bg_process_words()
 
 	while True:
-		if (shared_state["words"] != None
-		and shared_state["filtered_words"] == None
-		and (filter_process == None
-		or not filter_process.is_alive())):
+		if shared_state["words"] is None:
+			if not word_process.is_alive():
+				bg_process_words()
+		elif shared_state["filtered_words"] is None and not filter_process.is_alive():
 			bg_filter_words()
 
 		sleep(0.01) # 10 ms
@@ -208,7 +202,8 @@ try:
 				if query != arg:
 					print("# Query: update filter string, '{0}'".format(arg))
 					query = arg
-					bg_filter_words()
+					do_abort(filter_process)
+					shared_state["filtered_words"] = None
 				else:
 					print("# Query: nothing to update, '{0}' == '{1}'".format(query, arg))
 				continue
@@ -216,13 +211,16 @@ try:
 			# Bump
 			if '<' == prefix:
 				print("# Bump: resource changed")
-				bg_process_words()
+				do_abort(filter_process)
+				do_abort(word_process)
+				shared_state["words"] = None
+				shared_state["filtered_words"] = None
 				continue
 
 			# Poll
 			if '=' == prefix:
 				print("# Poll: decide to pass or push")
-				if shared_state["filtered_words"] != None:
+				if shared_state["filtered_words"] is not None:
 					#print(shared_state["filtered_words"])
 					send("> " + shared_state["filtered_words"] + "\n")
 					print("## Pushed: {0}...".format(shared_state["filtered_words"][:15]))
