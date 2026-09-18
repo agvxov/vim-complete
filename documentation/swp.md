@@ -18,22 +18,24 @@ All SWP communication is done through commands.
 
 Line based. UNIX line endings are used.
 
-    <prefix> [payload] \n
-
-
-    +----+    +---+
-    | CS |    | E |
-    +----+    +---+
-      -         <
-      >         ?
-                =
+   <prefix> [payload] \n
 
 | Prefix | Name  | Consumer-sent? | Worker-sent? | Expects-response? | Has-argument? | Description |
+| -----: | :---- | -------------: | -----------: | ----------------: | ------------: | :---------- |
 |      < | Bump  | yes            | no           | no                | no            | Signals that some shared resource has changed. |
 |      ? | Query | yes            | no           | no                | yes           | Sends a configuration update. |
 |      = | Poll  | yes            | no           | Yes               | no            | Requests the results. |
 |      - | Pass  | no             | yes          | no                | no            | Signals that the results are not ready yet. |
 |      > | Push  | no             | yes          | no                | yes           | Sends the results. |
+
+```text
+  +----------+    +--------+
+  | Consumer |    | Worker |
+  +----------+    +--------+
+       -              <
+       >              ?
+                      =
+```
 
 ## Notes
 The Query is named a Query because its argument
