@@ -4,9 +4,9 @@ if !exists('g:script_py_started')
 
 	let s:completion_channel = v:null
 
-    let tags_file = '/home/anon/stow/vim/.vim/plugin/HiTags/vim.tags'
-    let log_file  = '/home/anon/Swap/vim-complete/debug/server.log'
-    let srv_exe   = 'swp-completion-server.py'
+    let tags_file = '/home/anon/stow/vim/.vim/pack/hitags/start/hitags/cache/vim.tags'
+    let log_file  = expand('<sfile>:p:h:h') . '/debug/server.log'
+    let srv_exe   = expand('<sfile>:p:h:h') . '/bin/swp-completion-server.tcl'
     let cmd = [
         \ srv_exe,
         \ string(getpid()),
