@@ -1,4 +1,4 @@
-source /home/anon/.vim/autoload/swp-completion.vim
+execute 'source ' . expand('<sfile>:p:h:h:h:h') . '/autoload/swp-completion.vim'
 
 function! asyncomplete#sources#anon#get_source_options(opts)
     return extend({
