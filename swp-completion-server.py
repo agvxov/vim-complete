@@ -7,7 +7,7 @@ from time import sleep
 from sys import exit, argv
 import multiprocessing as mp
 
-# NOTE: the exit code might be useless because i think jobs are auto killed
+# NOTE: the exit code might be useless because i think vim jobs are auto killed
 
 query = ""
 parent_pid = None
