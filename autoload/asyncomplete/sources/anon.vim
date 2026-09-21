@@ -45,7 +45,7 @@ function! asyncomplete#sources#anon#completor(opt, ctx) abort
         " It seems to have been partially implemented.
         " `asyncomplete-lsp.vim` seems to use it anyways, I do wonder if they have noticed.
         let s:timer_id = timer_start(100, {
-        \     timer-> asyncomplete#sources#anon#completor(a:opt, a:ctx)}
+        \     timer-> asyncomplete#sources#anon#completor(a:opt, asyncomplete#context())}
         \ )
         return
     endif
