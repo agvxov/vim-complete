@@ -27,3 +27,10 @@ making the life-cycle of client plugins a nightmare.
 
 > [!CAUTION]
 > Unsurprisingly protocol spec comes out at roughly 50'000 words!
+
+## Installation
+
+Requirements:
+* Tcl
+* Tcl-thread
+* Tcl-unix-sockets
