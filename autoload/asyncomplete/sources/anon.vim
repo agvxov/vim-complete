@@ -30,6 +30,10 @@ function! asyncomplete#sources#anon#completor(opt, ctx) abort
     let l:kwlen    = len(l:kw)
     let l:startcol = l:col - l:kwlen
 
+    " XXX
+    " As of now, only the keyword under the cursor is passed to the completion server,
+    "  because the implementation cant handle more anyways.
+    " When scoping is introduced {foo.bar}, this line will have to change.
     call CompletionConfig(l:kw)
 
     let [l:status, l:words] = CompletionPoll()
