@@ -30,7 +30,7 @@ function! asyncomplete#sources#anon#completor(opt, ctx) abort
     let l:kwlen    = len(l:kw)
     let l:startcol = l:col - l:kwlen
 
-    call CompletionConfig(l:typed)
+    call CompletionConfig(l:kw)
 
     let [l:status, l:words] = CompletionPoll()
 
